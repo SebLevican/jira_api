@@ -3,7 +3,8 @@ from formid import JiraHandler
 from dotenv import load_dotenv
 import os
 import openpyxl
-
+import boto3
+from botocore.exceptions import NoCredentialsError
 
 def update_excel(ask_question, excel_file='oc.xlsx', save_as='prueba.xlsx'):
     """
@@ -27,4 +28,16 @@ def update_excel(ask_question, excel_file='oc.xlsx', save_as='prueba.xlsx'):
 
     # Guardar el archivo Excel modificado
     wb.save(save_as)
-    return f"Excel saved as {save_as}"
+
+    filename = f'Solicitud Orden de compra{save_as}'
+    file_path = '/path/to/' + filename
+    bucket_name = 'solicitudoc'
+
+    s3_client = boto3.client('s3')
+
+    try:
+        s3_client.upload_file(file_path,bucket_name,filename)
+        file_url = f'https://{bucket_name}.s3.amazonaws.com/{filename}'
+        return f'Archivo subido a s3 en {file_url}'
+    except NoCredentialsError:
+        return "Error: Credenciales no encontradas"
