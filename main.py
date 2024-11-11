@@ -11,28 +11,42 @@ load_dotenv()
 issue_key = os.getenv('ISSUE_KEY')
 jira_user = os.getenv('JIRA_USER')
 jira_api_token = os.getenv('JIRA_API_TOKEN')
+jira_base_url = os.getenv('JIRA_URL')
 
 
 app = FastAPI()
 
 class IssuePayload(BaseModel):
     issue: dict
-    issue_key: str
+
+def attach_file_to_jira(issue_key, filepath):
+    with open(file_path,"rb") as f:
+        headers = {
+            "X-atlassian-token":"no-check"
+        }
+        response = headers,
+        auth=(jira_user,jira_api_token),
+        file={"file":f}
+    )
+    if response.status_code ==200:
+        return "archivo adjuntado con exito"
+    else:
+        return f"error al subir {response.context}"
 
 # Ruta para recibir el webhook de Jira
 @app.post('/webhook')
 async def handle_webhook(payload: IssuePayload):
-    issue_key = payload.issue.get('key')
-
     try:
+        issue_key = payload.issue.get('key')
         bot = JiraHandler(issue_key, jira_user, jira_api_token)
         ask_question = bot.extract_responses()
+        file_path = update_excel(ask_question)
 
-        message = update_excel(ask_question)
+        attach_response = attach_file_to_jira(issue_key,file_path)
     except Exception as e:
         return {'error':'invalid or missing json payload','details': str(e)}
 
-    return {"message": message}
+    return {"message": attach_response}
 
 
 if __name__ == '__main__':
