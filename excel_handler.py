@@ -5,6 +5,15 @@ import os
 import openpyxl
 import boto3
 from botocore.exceptions import NoCredentialsError
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+aws_access_key_id = os.getenv('AWS_ACCESS_KEY')
+aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
+
+s3_client = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
 def update_excel(ask_question, excel_file='oc.xlsx', save_as='prueba.xlsx'):
     """
@@ -29,11 +38,10 @@ def update_excel(ask_question, excel_file='oc.xlsx', save_as='prueba.xlsx'):
     # Guardar el archivo Excel modificado
     wb.save(save_as)
 
-    filename = f'Solicitud Orden de compra{save_as}'
-    file_path = '/path/to/' + filename
+    filename = 'prueba.xlsx'
+    file_path = os.path;join(os.getcws(),filename)
     bucket_name = 'solicitudoc'
 
-    s3_client = boto3.client('s3')
 
     try:
         s3_client.upload_file(file_path,bucket_name,filename)
