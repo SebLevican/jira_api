@@ -4,7 +4,7 @@ import json
 import os
 from dotenv import load_dotenv
 
-URL_JIRA = None
+URL_JIRA = os.getenv('JIRA_WORKSPACE')
 
 class JiraHandler:
     def __init__(self, issue_key, jira_user, jira_api_token):
