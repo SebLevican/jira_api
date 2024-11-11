@@ -4,6 +4,8 @@ import json
 import os
 from dotenv import load_dotenv
 
+URL_JIRA = None
+
 class JiraHandler:
     def __init__(self, issue_key, jira_user, jira_api_token):
         #self.cloudId = cloudId
@@ -18,7 +20,7 @@ class JiraHandler:
 
     def get_cloud_id(self):
         
-        url = f'https://itisb.atlassian.net/_edge/tenant_info'
+        url = f'https://{URL_JIRA}.atlassian.net/_edge/tenant_info'
 
         headers = {
           "Accept": "application/json"
