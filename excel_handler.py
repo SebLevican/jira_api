@@ -46,6 +46,6 @@ def update_excel(ask_question, excel_file='oc.xlsx', save_as='prueba.xlsx'):
     try:
         s3_client.upload_file(file_path,bucket_name,filename)
         file_url = f'https://{bucket_name}.s3.amazonaws.com/{filename}'
-        return f'Archivo subido a s3 en {file_url}'
+        return file_path
     except NoCredentialsError:
         return "Error: Credenciales no encontradas"
